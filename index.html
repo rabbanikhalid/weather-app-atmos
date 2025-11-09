@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Atmos — Polished Weather</title>
+
+  <!-- Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="style.css" />
+
+  <meta name="theme-color" content="#a1c4fd"/>
+</head>
+<body>
+  <div id="app" class="app">
+
+    <!-- Scene (sun + layered clouds + rain) -->
+    <div id="scene" class="scene" aria-hidden="true">
+      <div class="sun" id="sun"></div>
+
+      <!-- layered clouds for parallax -->
+      <div class="cloud cloud-a layer-fast"></div>
+      <div class="cloud cloud-b layer-medium"></div>
+      <div class="cloud cloud-c layer-slow"></div>
+
+      <div class="rain-layer" id="rainLayer" aria-hidden="true"></div>
+    </div>
+
+    <!-- Foreground UI -->
+    <header class="topbar" role="banner">
+      <div class="left-controls">
+        <button id="locBtn" class="icon-btn" title="Use my location" aria-label="Use my location">📍</button>
+      </div>
+
+      <div class="center-title" aria-hidden="true">ATMOS</div>
+
+      <div class="right-controls">
+        <button id="unitToggle" class="pill" aria-pressed="true" aria-label="Toggle Celsius or Fahrenheit">°C</button>
+        <button id="themeToggle" class="icon-btn" aria-label="Toggle theme">🌗</button>
+      </div>
+    </header>
+
+    <main class="main" role="main">
+      <!-- Search (contrasting) -->
+      <div class="search" role="search">
+        
+        <div class="search-inner">
+          <span class="search-label">City</span>
+          <input id="cityInput" type="search" inputmode="search" placeholder="e.g. London, Bengaluru" aria-label="Search city" />
+          <button id="searchBtn" class="cta" aria-label="Search">Search</button>
+        </div>
+      </div>
+
+      <!-- Big weather card -->
+      <section class="weather-card fade" id="weatherCard" aria-live="polite">
+        <div class="weather-left">
+          <div class="location">
+            <h2 id="place" class="place">—</h2>
+            <p id="timeLocal" class="time-local">—</p>
+          </div>
+
+          <div class="main-temp">
+            <div id="iconLarge" class="icon-large" aria-hidden="true">☀️</div>
+            <div class="temps">
+              <div id="temp" class="temp">--°</div>
+              <div id="desc" class="desc">—</div>
+            </div>
+          </div>
+
+          <div class="details-grid">
+            <div class="detail">
+              <div class="detail-label">Feels</div>
+              <div id="feels" class="detail-value">--°</div>
+            </div>
+            <div class="detail">
+              <div class="detail-label">Humidity</div>
+              <div id="hum" class="detail-value">--%</div>
+            </div>
+            <div class="detail">
+              <div class="detail-label">Wind</div>
+              <div id="wind" class="detail-value">-- m/s</div>
+            </div>
+            <div class="detail">
+              <div class="detail-label">Pressure</div>
+              <div id="pressure" class="detail-value">-- hPa</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="weather-right">
+          <div class="sunset-sunrise">
+            <div><small>Sunrise</small><div id="sunrise">--:--</div></div>
+            <div><small>Sunset</small><div id="sunset">--:--</div></div>
+          </div>
+
+          <div class="forecast-title">5-Day Forecast</div>
+          <div class="forecast-row" id="forecast"></div>
+
+          <div id="error" role="alert" class="error hidden"></div>
+        </div>
+      </section>
+
+      <footer class="footer">
+        <small>Built with OpenWeather • Minimal JS • Pure CSS animations</small>
+      </footer>
+    </main>
+  </div>
+
+  <script src="script.js" defer></script>
+</body>
+</html>
