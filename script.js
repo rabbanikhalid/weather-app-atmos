@@ -1,6 +1,5 @@
-// script.js (updated time handling + day/night auto theme)
-// Minimal & clear JS: current + forecast with correct local times and day/night detection.
-const API_KEY = "645a5c977e84a66af079f767eaa3f584"; // replace if needed
+
+const API_KEY = "645a5c977e84a66af079f767eaa3f584"; 
 
 // Elements (same as before)
 const cityInput = document.getElementById("cityInput");
@@ -31,29 +30,15 @@ const rainLayer = document.getElementById("rainLayer");
 let isCelsius = true;
 let currentCity = "";
 
-/* ---------- Helpers ---------- */
 
-/**
- * Format a unix timestamp (seconds) to a location-local time string.
- * We add tzOffset (seconds) to unix, create Date and format it as UTC so the result
- * represents the location local time independent of the viewer's own timezone.
- *
- * @param {number} unixSec - unix timestamp (seconds) from API (UTC)
- * @param {number} tzOffsetSec - timezone offset in seconds for that location (from API)
- * @param {object} opts - Intl options for formatting
- * @returns formatted time string
- */
 function formatLocal(unixSec, tzOffsetSec = 0, opts = { hour: '2-digit', minute: '2-digit', hour12: true }) {
   const adjustedMs = (unixSec + (tzOffsetSec || 0)) * 1000;
   const d = new Date(adjustedMs);
-  // Treat the adjusted instant as UTC so the displayed values match the location local time
+
   return d.toLocaleTimeString([], Object.assign({}, opts, { timeZone: 'UTC' }));
 }
 
-/**
- * Format a location-local datetime (weekday + date + time).
- * Uses timeZone: 'UTC' trick after shifting timestamp by tzOffset.
- */
+
 function formatLocalDateTime(unixSec, tzOffsetSec = 0) {
   const adjustedMs = (unixSec + (tzOffsetSec || 0)) * 1000;
   const d = new Date(adjustedMs);
@@ -82,24 +67,22 @@ function weatherVisuals(main){
 }
 
 function setScene(mode, isDay) {
-  // keep manual theme toggle available — only auto-toggle if not forcing theme
-  // We'll apply day/night visuals: if isDay === false -> apply darker body (night)
+
   if(isDay === false) {
     document.body.classList.add('dark');
   } else if(isDay === true) {
     document.body.classList.remove('dark');
   }
-  // rain opacity and sun brightness adjustments:
   rainLayer.style.opacity = (mode === 'rain' ? 0.92 : 0);
   sun.style.opacity = (mode === 'rain' ? 0.18 : (mode === 'clouds' ? 0.48 : 1));
 }
 
-/* ---------- Forecast grouping (unchanged) ---------- */
+
 function groupForecastByDay(list){
   const days = {};
   list.forEach(item=>{
     const date = new Date(item.dt * 1000);
-    const key = date.toISOString().slice(0,10); // yyyy-mm-dd
+    const key = date.toISOString().slice(0,10); 
     if(!days[key]) days[key] = [];
     days[key].push(item);
   });
@@ -134,9 +117,9 @@ function renderForecastCards(dailyArray){
   });
 }
 
-/* ---------- Populate UI (with corrected local times) ---------- */
+
 function populateUI(current, forecastGrouped){
-  // current.timezone is seconds offset from UTC for the location
+
   const tzOffset = current.timezone || 0;
 
   placeEl.textContent = `${current.name}, ${current.sys.country || ""}`;
@@ -150,32 +133,31 @@ function populateUI(current, forecastGrouped){
   windEl.textContent = `${current.wind.speed} m/s`;
   pressureEl.textContent = `${current.main.pressure} hPa`;
 
-  // sunrise and sunset: format using location tzOffset
+
   sunriseEl.textContent = formatLocal(current.sys.sunrise, tzOffset, { hour:'2-digit', minute:'2-digit', hour12: true });
   sunsetEl.textContent = formatLocal(current.sys.sunset, tzOffset, { hour:'2-digit', minute:'2-digit', hour12: true });
 
   const {icon, mode} = weatherVisuals(current.weather[0].main);
   iconLarge.textContent = icon;
 
-  // Determine day/night at the location: compare local timestamps
-  const localNowMs = (current.dt + tzOffset) * 1000;           // instant adjusted to location clock
+
+  const localNowMs = (current.dt + tzOffset) * 1000;           
   const localSunriseMs = (current.sys.sunrise + tzOffset) * 1000;
   const localSunsetMs = (current.sys.sunset + tzOffset) * 1000;
   const isDay = (localNowMs >= localSunriseMs && localNowMs < localSunsetMs);
 
-  // set scene with mode and day/night
+
   setScene(mode, isDay);
 
-  // forecast render
-  if(Array.isArray(forecastGrouped) && forecastGrouped.length) renderForecastCards(forecastGrouped);
-  else forecastEl.innerHTML = ''; // clear if missing
 
-  // show card nicely
+  if(Array.isArray(forecastGrouped) && forecastGrouped.length) renderForecastCards(forecastGrouped);
+  else forecastEl.innerHTML = ''; 
+
   weatherCard.classList.add('show');
   clearError();
 }
 
-/* ---------- Fetching functions ---------- */
+
 async function fetchByCity(city){
   if(!city) return showError("Enter a city");
   try{
@@ -214,7 +196,7 @@ function tryGeolocation(){
   }, err => { /* user denied or fail */ }, { timeout: 7000 });
 }
 
-/* ---------- events ---------- */
+
 searchBtn.addEventListener('click', ()=>{ const v = cityInput.value.trim(); if(v) fetchByCity(v); });
 cityInput.addEventListener('keypress', e => { if(e.key === 'Enter'){ const v = cityInput.value.trim(); if(v) fetchByCity(v); } });
 locBtn.addEventListener('click', ()=> tryGeolocation());
@@ -227,5 +209,6 @@ unitToggle.addEventListener('click', ()=> {
 
 themeToggle.addEventListener('click', ()=> document.body.classList.toggle('dark'));
 
-// try auto-detect on load
+
 tryGeolocation();
+
