@@ -1,7 +1,7 @@
 
 const API_KEY = "645a5c977e84a66af079f767eaa3f584"; 
 
-// Elements (same as before)
+
 const cityInput = document.getElementById("cityInput");
 const searchBtn = document.getElementById("searchBtn");
 const locBtn = document.getElementById("locBtn");
@@ -211,4 +211,5 @@ themeToggle.addEventListener('click', ()=> document.body.classList.toggle('dark'
 
 
 tryGeolocation();
+
 
